@@ -1,0 +1,25 @@
+﻿@model ABCRetail_Project1.Models.ProductEntity
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="card shadow-sm">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="@Model.ImageUrl" class="img-fluid rounded-start" alt="@Model.ProductName" />
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h3 class="card-title">@Model.ProductName</h3>
+                <p>@Model.Description</p>
+                <p><strong>Price:</strong> R @Model.Price.ToString("N2")</p>
+                <p><strong>Available:</strong> @Model.StockQuantity</p>
+
+                <a asp-area="Customer" asp-controller="Shop" asp-action="PlaceOrder" asp-route-id="@Model.RowKey" class="btn btn-success">Order Now</a>
+                <a asp-area="Customer" asp-controller="Shop" asp-action="Index" class="btn btn-secondary">Back to Products</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+

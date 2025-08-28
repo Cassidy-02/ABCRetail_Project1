@@ -1,0 +1,59 @@
+﻿@model IEnumerable<ABCRetail_Project1.Models.ProductEntity>
+
+@{
+    ViewData["Title"] = "Admin - Products";
+}
+
+<h2>Product List</h2>
+<a asp-action="Create" class="btn btn-primary">Add New Product</a>
+
+<table class="table table-bordered table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Stock Quantity</th>
+            <th style="text-align:right;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                    {
+                        <img src="@product.ImageUrl" alt="@product.ProductName" style="max-width:100px;" />
+                    }
+                    else
+                    {
+                        <span>No image</span>
+                    }
+                </td>
+                <td>@product.ProductName</td>
+                <td>@product.Description</td>
+                <td>@product.Price.ToString("N2")</td>
+                <td>@product.StockQuantity</td>
+
+                <td style="text-align:right;">
+                    <a asp-action="Update" asp-route-RowKey="@product.RowKey"
+                       class="btn btn-primary btn-sm">
+                        Update
+                    </a>
+
+                    <form asp-action="Delete" asp-route-RowKey="@product.RowKey" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete @product.ProductName?');">
+                            Delete
+                        </button>
+                  
+                    </form>
+                   
+                    </td>
+            </tr>
+        }
+    </tbody>
+</table>

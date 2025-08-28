@@ -1,0 +1,16 @@
+﻿@model ABCRetail_Project1.Models.Order
+
+@if (Model == null)
+{
+    <h2>@ViewBag.Message</h2>
+}
+else
+{
+    <h2>Processed Order</h2>
+    <p><strong>Order ID:</strong> @Model.OrderId</p>
+    <p><strong>Customer:</strong> @Model.CustomerName</p>
+    <p><strong>Product:</strong> @ViewBag.ProductName (@Model.ProductName)</p>
+    <p><strong>Quantity:</strong> @Model.Quantity</p>
+}
+
+<a asp-action="Index" class="btn btn-primary">Back to Orders</a>

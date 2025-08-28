@@ -1,0 +1,55 @@
+﻿@model IEnumerable<ABCRetail_Project1.Models.Order>
+
+@{
+    ViewData["Title"] = "Orders Queue";
+}
+
+<h2>Orders in Queue</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Place New Order</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p>No orders currently in queue.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>OrderId</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.CustomerName</td>
+                <td>@order.ProductId</td>
+                <td>@order.Quantity</td>
+                <td>@order.Status</td>
+                <td>@order.OrderDate.ToString("g")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<form asp-action="Process" method="post">
+    <button type="submit" class="btn btn-success">Process Next Order</button>
+</form>
+
+

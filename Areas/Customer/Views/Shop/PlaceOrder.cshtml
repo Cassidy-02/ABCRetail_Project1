@@ -1,0 +1,30 @@
+﻿@model ABCRetail_Project1.Models.ProductEntity
+@{
+    ViewData["Title"] = "Place Order";
+}
+
+<h2>Order Product</h2>
+<hr />
+
+<form asp-area="Customer" asp-controller="Shop" asp-action="PlaceOrder" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="rowKey" value="@Model.RowKey" />
+
+    <div class="mb-3">
+        <label class="form-label">Product</label>
+        <input class="form-control" value="@Model.ProductName" disabled />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Price (R)</label>
+        <input class="form-control" value="@Model.Price.ToString("N2")" disabled />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Quantity</label>
+        <input type="number" name="quantity" class="form-control" min="1" max="@Model.StockQuantity" required />
+    </div>
+
+    <button type="submit" class="btn btn-success">Confirm Order</button>
+    <a asp-area="Customer" asp-controller="Shop" asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

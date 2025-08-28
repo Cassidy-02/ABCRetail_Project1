@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<div class="alert alert-success mt-4">
+    <h3> Thank you for your order!</h3>
+    <p>Your order has been placed successfully.</p>
+    <p><strong>Order ID:</strong> @ViewBag.OrderId</p>
+</div>
+
+<a asp-area="Customer" asp-controller="Shop" asp-action="Index" class="btn btn-primary mt-3">
+    Continue Shopping
+</a>
+

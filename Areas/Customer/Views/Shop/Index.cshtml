@@ -1,0 +1,30 @@
+﻿@model IEnumerable<ABCRetail_Project1.Models.ProductEntity>
+@{
+    ViewData["Title"] = "Shop - Products";
+}
+
+<h2>Product Catalog</h2>
+<hr />
+
+<div class="row">
+    @foreach (var product in Model)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="@product.ImageUrl" class="card-img-top" alt="@product.ProductName" />
+                <div class="card-body">
+                    <h5 class="card-title">@product.ProductName</h5>
+                    <p>@product.Description</p>
+                    <p><strong>Price:</strong> R @product.Price.ToString("N2")</p>
+                    <p><strong>Stock:</strong> @product.StockQuantity</p>
+                </div>
+                <div class="card-footer text-center">
+                    <a asp-area="Customer" asp-controller="Shop" asp-action="Details" asp-route-id="@product.RowKey" class="btn btn-primary btn-sm">View</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
