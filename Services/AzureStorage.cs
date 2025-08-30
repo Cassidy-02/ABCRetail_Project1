@@ -191,10 +191,27 @@ namespace ABCRetail_Project1.Services
             await _productTable.DeleteEntityAsync("Product", RowKey);
         }
         // Update product by RowKey
-        public async Task UpdateProductAsync(ProductEntity product)
+        public async Task UpdateProductAsync(ProductEntity product, IFormFile imageFile)
         {
-            
-            await _productTable.UpdateEntityAsync(product, ETag.All, TableUpdateMode.Replace);
+            // If an image was uploaded
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                // Use a unique file name or reuse the RowKey as the blob name
+                string blobName = product.RowKey + Path.GetExtension(imageFile.FileName);
+
+                // Get blob client
+                var blobClient = _blobContainer.GetBlobClient(blobName);
+
+                // Upload (overwrite existing)
+                using (var stream = imageFile.OpenReadStream())
+                {
+                    await blobClient.UploadAsync(stream, overwrite: true);
+                }
+
+                // Update product's ImageUrl in table
+                product.ImageUrl = blobClient.Uri.ToString();
+            }
+                await _productTable.UpdateEntityAsync(product, ETag.All, TableUpdateMode.Replace);
         }
 
         public async Task<ProductEntity?> GetProductByIdAsync(string rowKey)
@@ -213,23 +230,23 @@ namespace ABCRetail_Project1.Services
 
 
         // Uploads image to Blob Storage and returns its URL
-        public async Task<string> UploadImageAsync(IFormFile imageFile, string productId)
+        public async Task<string?> UploadImageAsync(IFormFile imageFile)
         {
             if (imageFile == null || imageFile.Length == 0)
                 return null;
 
-            var ext = Path.GetExtension(imageFile.FileName).ToLower();
-            var blob = _blobContainer.GetBlobClient($"{productId}{ext}");
+            var containerClient = _blobContainer;
+            await containerClient.CreateIfNotExistsAsync();
+            await containerClient.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
 
-            var headers = new BlobHttpHeaders
+            var blobClient = containerClient.GetBlobClient(Guid.NewGuid() + Path.GetExtension(imageFile.FileName));
+
+            using (var stream = imageFile.OpenReadStream())
             {
-                ContentType = (ext == ".png") ? "image/png" : "image/jpeg"
-            };
+                await blobClient.UploadAsync(stream, overwrite: true);
+            }
 
-            using var stream = imageFile.OpenReadStream();
-            await blob.UploadAsync(stream, new BlobUploadOptions { HttpHeaders = headers });
-
-            return blob.Uri.ToString();
+            return blobClient.Uri.ToString();
         }
 
 

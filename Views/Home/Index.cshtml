@@ -1,8 +1,35 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Welcome to ABC Retail";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mt-5">
+    <h1 class="display-4">Welcome to ABC Retail</h1>
+    <p class="lead">Choose your portal below:</p>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card shadow-lg p-4">
+                <h3>Customer Portal</h3>
+                <p>Browse products, view details, and place orders.</p>
+                <a class="btn btn-primary"
+                   asp-area="Customer"
+                   asp-controller="Shop"
+                   asp-action="Index">
+                    Go to Shop
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-lg p-4">
+                <h3>Admin Portal</h3>
+                <p>Manage products, inventory, orders, and files.</p>
+                <a class="btn btn-danger"
+                   asp-area="Admin"
+                   asp-controller="Product"
+                   asp-action="Index">
+                    Go to Admin
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
