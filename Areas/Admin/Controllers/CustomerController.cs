@@ -1,10 +1,12 @@
 ﻿using ABCRetail_Project1.Models;
 using ABCRetail_Project1.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ABCRetail_Project1.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    
     public class CustomerController : Controller
     {
         private readonly AzureStorage _storage;
@@ -20,6 +22,7 @@ namespace ABCRetail_Project1.Areas.Admin.Controllers
             return View(customers);
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
              return View();

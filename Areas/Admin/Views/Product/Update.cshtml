@@ -32,12 +32,16 @@
     </div>
 
     <div class="form-group">
-        <label>Current Image</label><br />
-        <img src="@Model.ImageUrl" alt="Product Image" width="150" /><br /><br />
         <label>Upload New Image</label>
         <input type="file" name="imageFile" class="form-control" />
     </div>
-  
+
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <p>Current Image:</p>
+        <img src="@Model.ImageUrl" alt="Product Image" width="150"/>
+    }
+
 
     <button type="submit" class="btn btn-success mt-2">Update</button>
     <a asp-action="Index" class="btn btn-secondary mt-2">Cancel</a>

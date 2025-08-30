@@ -25,11 +25,7 @@
                 <td>
                     @if (!string.IsNullOrEmpty(product.ImageUrl))
                     {
-                        <img src="@product.ImageUrl" alt="@product.ProductName" style="max-width:100px;" />
-                    }
-                    else
-                    {
-                        <span>No image</span>
+                        <img src="@product.ImageUrl" alt="@product.ProductName" width="90" />
                     }
                 </td>
                 <td>@product.ProductName</td>

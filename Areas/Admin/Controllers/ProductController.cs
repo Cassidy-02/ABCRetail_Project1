@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ABCRetail_Project1.Models;
 using ABCRetail_Project1.Services;
-using ABCRetail_Project1.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ABCRetail_Project1.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Route("Admin/[controller]/[action]")]
     public class ProductController : Controller
     {
         private readonly AzureStorage _storage;
@@ -28,37 +30,22 @@ namespace ABCRetail_Project1.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductEntity product, IFormFile? ImageFile)
+        public async Task<IActionResult> Create(ProductEntity product, IFormFile ImageFile)
         {
             if (!ModelState.IsValid)
             {
-                return View(product);
-            }
+                if (ImageFile != null)
+                {
+                    var imageUrl = await _storage.UploadImageAsync(ImageFile);
+                    product.ImageUrl = imageUrl ?? string.Empty;
+                }
+                product.PartitionKey = "Product"; // Set PartitionKey
+                product.RowKey = Guid.NewGuid().ToString(); // Generate unique RowKey
 
-             if (ImageFile != null && ImageFile.Length > 0)
-                {
-                    // Pass the IFormFile and product.RowKey to UploadImageAsync 
-                    var imageUrl = await _storage.UploadImageAsync(ImageFile, product.RowKey);
-                    product.ImageUrl = imageUrl;
-                }
-            else
-                {
-                    ModelState.AddModelError("ImageFile", "Please upload an image.");
-                    return View(product);
-                }
-            try
-            {
-                // Call AzureStorage to add the product
                 await _storage.AddProductAsync(product);
-
-                TempData["SuccessMessage"] = "Product created successfully!";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "An error occurred while creating the product: " + ex.Message);
-                return View(product);
-            }    
+            return View(product);
         }
 
         [HttpPost]
@@ -75,22 +62,19 @@ namespace ABCRetail_Project1.Areas.Admin.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Update(string RowKey)
+        public async Task<IActionResult> Update(string rowKey)
         {
-            if (RowKey == null) return NotFound();
-
-            var product = await _storage.GetProductByIdAsync(RowKey);
-            if (product == null)
-                return NotFound();
-
+            if (string.IsNullOrEmpty(rowKey)) return NotFound();
+            var product = await _storage.GetProductByIdAsync(rowKey);
+            if (product == null) return NotFound();
             return View(product);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(string RowKey, ProductEntity product, IFormFile imageFile)
+        public async Task<IActionResult> Update(string rowKey, ProductEntity product, IFormFile? imageFile)
         {
-            if (RowKey != product.RowKey)
+            if (rowKey != product.RowKey)
                 return NotFound();
 
             if (ModelState.IsValid)
@@ -98,10 +82,14 @@ namespace ABCRetail_Project1.Areas.Admin.Controllers
                 // Upload new image if one was chosen
                 if (imageFile != null)
                 {
-                    product.ImageUrl = await _storage.UploadImageAsync(imageFile, product.RowKey);
+                    var imageUrl = await _storage.UploadImageAsync(imageFile);
+                    product.ImageUrl = imageUrl ?? string.Empty;
                 }
 
-                await _storage.UpdateProductAsync(product);
+                product.PartitionKey = "Product"; // Ensure PartitionKey is set
+
+                await _storage.UpdateProductAsync(product, imageFile!);
+
                 return RedirectToAction(nameof(Index));
             }
 
