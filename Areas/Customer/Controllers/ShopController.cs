@@ -69,7 +69,7 @@ namespace ABCRetail_Project1.Areas.Customer.Controllers
                 ProductId = product.RowKey,
                 ProductName = product.ProductName,
                 Quantity = quantity,
-                CustomerName = "Joe Doe", 
+                CustomerName = "John Doe", 
                 OrderDate = DateTime.UtcNow
             };
 
@@ -81,7 +81,7 @@ namespace ABCRetail_Project1.Areas.Customer.Controllers
 
             // Reduce stock and update product table
             product.StockQuantity -= quantity;
-            await _storage.UpdateProductAsync(product);
+            await _storage.UpdateProductAsync(product, null);
 
             // Redirect to confirmation page
             return RedirectToAction("Confirmation",new {orderId = order.OrderId});
